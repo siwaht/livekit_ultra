@@ -1,11 +1,23 @@
+import logging
 import os
 
 from dotenv import load_dotenv
 from livekit import agents
-from livekit.agents import Agent, AgentServer, AgentSession, JobContext, inference
+from livekit.agents import (
+    Agent,
+    AgentServer,
+    AgentSession,
+    ErrorEvent,
+    JobContext,
+    UserInputTranscribedEvent,
+    UserStateChangedEvent,
+    inference,
+)
 from livekit.plugins import deepgram, elevenlabs, openai
 
 load_dotenv()
+
+logger = logging.getLogger("phone-agent")
 
 server = AgentServer()
 
@@ -33,6 +45,23 @@ async def entrypoint(ctx: JobContext):
             api_key=os.environ["ELEVENLABS_API_KEY"],
         ),
     )
+
+    @session.on("user_input_transcribed")
+    def _on_transcript(ev: UserInputTranscribedEvent) -> None:
+        logger.info("heard caller: final=%s len=%d", ev.is_final, len(ev.transcript))
+
+    @session.on("user_state_changed")
+    def _on_user_state(ev: UserStateChangedEvent) -> None:
+        logger.info("caller state: %s -> %s", ev.old_state, ev.new_state)
+
+    @session.on("error")
+    def _on_error(ev: ErrorEvent) -> None:
+        logger.error(
+            "session error from %s (recoverable=%s): %s",
+            type(ev.source).__name__,
+            ev.error.recoverable,
+            ev.error,
+        )
 
     await session.start(agent=agent, room=ctx.room)
     await session.generate_reply(
