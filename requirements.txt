@@ -1,0 +1,12 @@
+langchain
+langgraph
+deepagents
+langchain-openai
+langchain-text-splitters
+python-dotenv
+elevenlabs
+langchain-quickjs
+livekit-agents[elevenlabs,langchain,silero]>=1.7.0
+livekit-plugins-deepgram==1.7.1
+livekit-plugins-openai==1.7.1
+Pillow

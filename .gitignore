@@ -1,0 +1,21 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Local memory artifacts (superseded by Supabase)
+memory/
+chroma_memory/
+
+# Local research and development artifacts not needed in deployment
+.firecrawl/
+demo.ipynb
+examples/
+skills/
+memories/
+semantic-review/

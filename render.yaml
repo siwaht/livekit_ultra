@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: livekit-twilio-webhook
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python twilio_webhook.py
+    healthCheckPath: /health
+    autoDeployTrigger: commit
+    envVars:
+      - key: LIVEKIT_URL
+        sync: false
+      - key: LIVEKIT_API_KEY
+        sync: false
+      - key: LIVEKIT_API_SECRET
+        sync: false
+
+  - type: worker
+    name: livekit-phone-agent
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py start
+    autoDeployTrigger: commit
+    envVars:
+      - key: LIVEKIT_URL
+        sync: false
+      - key: LIVEKIT_API_KEY
+        sync: false
+      - key: LIVEKIT_API_SECRET
+        sync: false
+      - key: DEEPGRAM_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ELEVENLABS_API_KEY
+        sync: false
