@@ -19,7 +19,9 @@ load_dotenv()
 
 logger = logging.getLogger("phone-agent")
 
-server = AgentServer()
+# Keep only one warm process. The production default prewarms one per CPU,
+# which exceeds small hosting memory limits.
+server = AgentServer(num_idle_processes=1)
 
 @server.rtc_session(agent_name="phone-agent")
 async def entrypoint(ctx: JobContext):
